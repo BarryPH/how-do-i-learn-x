@@ -21,7 +21,7 @@ const HeroTitle = styled.h1`
 	margin-top: -5rem;
 `;
 
-const HeroSearch = styled(Search)`
+const SearchWrapper = styled(Search)`
 	margin-top: 1.5rem;
 	max-width: 600px;
 `;
@@ -29,7 +29,7 @@ const HeroSearch = styled(Search)`
 const Index = (props) => (
 	<FullHero>
 		<HeroTitle>HowDoILearn</HeroTitle>
-		<HeroSearch full placeholder='How do I learn...'/>
+		<SearchWrapper full placeholder='How do I learn...'/>
 	</FullHero>
 );
 
