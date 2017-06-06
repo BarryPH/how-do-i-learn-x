@@ -23,12 +23,8 @@ const Logo = styled(Anchor)`
 	}
 `;
 
-const FormWrapper = styled.div`
-	width: auto;
-`;
-
-const SearchWrapper = styled.div`
-	flex-grow: 1;
+const SearchWrapper = styled(Search)`
+	width: 300px;
 `;
 
 const Header = () => (
@@ -38,9 +34,7 @@ const Header = () => (
 				<Logo><span>&#8516;</span> HowDoILearn</Logo>
 			</Link>
 
-			<FormWrapper>
-				<Input placeholder='How do I learn...' />
-			</FormWrapper>
+			<SearchWrapper />
 
 			<nav>
 				<Link href='/Top'>

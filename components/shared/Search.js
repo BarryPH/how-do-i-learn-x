@@ -5,12 +5,11 @@ import {
 	Input,
 } from './Form.js';
 
-
 class Search extends React.Component {
 	render() {
 		return (
-			<Form>
-				<Input {...this.props} />
+			<Form {...this.props}>
+				<Input noSpacing placeholder='How do I learn...' />
 			</Form>
 		)
 	}
