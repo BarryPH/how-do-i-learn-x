@@ -1,30 +1,45 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { parse } = require('url');
 const next = require('next');
 const { graphql } = require('graphql');
+const { makeExecutableSchema } = require('graphql-tools');
 const graphqlHTTP = require('express-graphql');
 
-const schema = require('./graphql/index.js');
 
 async function start() {
-	mongoose.connect('mongodb://localhost:27017/local');
+	// Mongoose
+	mongoose.connect('mongodb://localhost:27017/howdoilearn');
 
 
+	// Next.js setup
 	const dev = process.env.NODE_ENV !== 'production';
-	const nextApp = next({ dev }); const handle = nextApp.getRequestHandler()
+	const nextApp = next({ dev });
+	const handle = nextApp.getRequestHandler()
 
 	await nextApp.prepare();
 
 
+	// Express.js setup
 	const app = express();
 
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(bodyParser.text({ type: 'application/graphql' }));
 
+
+	// Graphql setup
+	const schema = require('./graphql/schema.js');
+	const resolvers = require('./graphql/resolvers.js');
+
+	const executableSchema = makeExecutableSchema({
+		typeDefs: schema,
+		resolvers,
+	});
+
+
+	// Routes
 	app.use('/graphql', graphqlHTTP((req) => ({
-		schema,
+		schema: executableSchema,
 		graphiql: dev,
 	})));
 
@@ -32,6 +47,8 @@ async function start() {
 		return handle(req, res)
 	});
 
+
+	// Start server
 	const port = process.env.PORT || 3000;
 	await app.listen(port);
 	console.log(`> Running on http://localhost:${port}`);
