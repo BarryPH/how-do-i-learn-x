@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+//const bodyParser = require('body-parser');
 const next = require('next');
 const { graphql } = require('graphql');
 const { makeExecutableSchema } = require('graphql-tools');
@@ -23,8 +23,8 @@ async function start() {
 	// Express.js setup
 	const app = express();
 
-	app.use(bodyParser.urlencoded({ extended: true }));
-	app.use(bodyParser.text({ type: 'application/graphql' }));
+	//app.use(bodyParser.urlencoded({ extended: true }));
+	//app.use(bodyParser.text({ type: 'application/graphql' }));
 
 
 	// Graphql setup
@@ -42,6 +42,13 @@ async function start() {
 		schema: executableSchema,
 		graphiql: dev,
 	})));
+
+	// Dynamic Next.js routes
+	app.get('/:topic', (req, res) => {
+		const url = '/topic';
+		const queryParams = { topic: req.params.topic };
+		nextApp.render(req, res, url, queryParams);
+	});
 
 	app.get('*', (req, res) => {
 		return handle(req, res)

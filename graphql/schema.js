@@ -3,13 +3,14 @@ const Schema = `
 		_id: String,
 		title: String,
 		type: String,
+		topic: String,
 		link: String,
 		description: String,
 	}
 
 	type Query {
-		resource(id: String): [Resource],
-		types: [String],
+		resources(topic: String): [Resource],
+		topics: [String],
 	}
 `;
 
