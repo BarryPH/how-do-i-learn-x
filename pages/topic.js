@@ -1,5 +1,8 @@
+import React from 'react';
 import styled from 'styled-components';
+import gql from 'graphql-tag';
 
+import apollo from '../lib/apollo.js';
 import Layout from '../components/Layout.js';
 import Block from '../components/shared/Block.js';
 import Container from '../components/shared/Container.js';
@@ -11,6 +14,7 @@ const ResourceListHeader = styled.h2`
 	align-items: center;
 	margin-top: 0;
 	margin-left: calc(200px + 1rem);
+	text-transform: capitalize;
 
 	a {
 		font-size: 1rem;
@@ -30,11 +34,19 @@ const ResourceGroup = styled.div`
 	}
 `;
 
+
 const ResourceGroupTitle = styled.h4`
+	text-transform: capitalize;
 `;
 
-const Resouce = styled.div`
-`;
+const ResourceGroupContainer = (props) => (
+	<ResourceGroup>
+		<ResourceGroupTitle id={props.type}>{props.type}</ResourceGroupTitle>
+		{props.resources.map((resource) => (
+			<Anchor block>{resource.title}</Anchor>
+		))}
+	</ResourceGroup>
+);
 
 const LayoutWrapper = styled.div`
 	display: flex;
@@ -51,73 +63,82 @@ const Sidebar = styled.ul`
 	opacity: 0.8;
 `;
 
-const Topic  = (props) => (
-	<Layout>
-		<Block>
-			<Container>
-				<ResourceListHeader>
-					React <Anchor href='/new'>+ Add Resource</Anchor>
-				</ResourceListHeader>
 
-				<LayoutWrapper>
-					<Sidebar>
-						<ResourceGroupTitle>Types</ResourceGroupTitle>
-						<Anchor block href='#books'>Books</Anchor>
-						<Anchor block href='#videos'>Videos</Anchor>
-						<Anchor block href='#articles'>Articles</Anchor>
-						<Anchor block href='#other'>Other</Anchor>
-					</Sidebar>
+function filterByType(resources) {
+	return function(type) {
+		return resources.filter((resource) => resource.type === type);
+	}
+}
 
-					<div>
-						<ResourceList>
-							<ResourceGroup>
-								<ResourceGroupTitle id='books'>Books</ResourceGroupTitle>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-							</ResourceGroup>
-							<ResourceGroup>
-								<ResourceGroupTitle id='videos'>Videos</ResourceGroupTitle>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-							</ResourceGroup>
-							<ResourceGroup>
-								<ResourceGroupTitle>Articles</ResourceGroupTitle>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-							</ResourceGroup>
-							<ResourceGroup>
-								<ResourceGroupTitle>Other</ResourceGroupTitle>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-								<Anchor block>Testing</Anchor>
-							</ResourceGroup>
-						</ResourceList>
-					</div>
-				</LayoutWrapper>
-			</Container>
-		</Block>
-	</Layout>
-);
+
+class Topic extends React.Component {
+	constructor(props) {
+		super(props);
+	}
+
+	static async getInitialProps(context) {
+		const { topic } = context.query;
+		const query = gql`{
+			resources(topic: "${topic}") {
+				_id,
+				title,
+				type,
+				link,
+				description,
+			},
+		}`;
+
+		const { data: { resources } } = await apollo.query({ query });
+
+		const resourcesOfType = filterByType(resources);
+		const books = resourcesOfType('book');
+		const videos = resourcesOfType('video');
+		const articles = resourcesOfType('article');
+		const other = resourcesOfType('other');
+
+		return {
+			topic,
+			resources: {
+				books,
+				videos,
+				articles,
+				other,
+			},
+		};
+	}
+
+	render() {
+		return (
+			<Layout>
+				<Block>
+					<Container>
+						<ResourceListHeader>
+							{this.props.topic} <Anchor href='/new'>+ Add Resource</Anchor>
+						</ResourceListHeader>
+
+						<LayoutWrapper>
+							<Sidebar>
+								<ResourceGroupTitle>Types</ResourceGroupTitle>
+								<Anchor block href='#books'>Books</Anchor>
+								<Anchor block href='#videos'>Videos</Anchor>
+								<Anchor block href='#articles'>Articles</Anchor>
+								<Anchor block href='#other'>Other</Anchor>
+							</Sidebar>
+
+							<div>
+								<ResourceList>
+									<ResourceGroupContainer type='books' resources={this.props.resources['books']} />
+									<ResourceGroupContainer type='articles' resources={this.props.resources['articles']} />
+									<ResourceGroupContainer type='videos' resources={this.props.resources['videos']} />
+									<ResourceGroupContainer type='other' resources={this.props.resources['other']} />
+								</ResourceList>
+							</div>
+						</LayoutWrapper>
+					</Container>
+				</Block>
+			</Layout>
+		)
+	}
+}
 
 export default Topic;
