@@ -23,9 +23,6 @@ async function start() {
 	// Express.js setup
 	const app = express();
 
-	//app.use(bodyParser.urlencoded({ extended: true }));
-	//app.use(bodyParser.text({ type: 'application/graphql' }));
-
 
 	// Graphql setup
 	const schema = require('./graphql/schema.js');
@@ -43,11 +40,14 @@ async function start() {
 		graphiql: dev,
 	})));
 
+	app.get('/new', (req, res) => {
+		nextApp.render(req, res, '/new');
+	});
+
 	// Dynamic Next.js routes
 	app.get('/:topic', (req, res) => {
-		const url = '/topic';
 		const queryParams = { topic: req.params.topic };
-		nextApp.render(req, res, url, queryParams);
+		nextApp.render(req, res, '/topic', queryParams);
 	});
 
 	app.get('*', (req, res) => {
