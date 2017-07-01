@@ -20,6 +20,7 @@ class Search extends React.Component {
 
 		this.state = {
 			topics: [],
+			searchValue: '',
 		};
 	}
 
@@ -34,7 +35,7 @@ class Search extends React.Component {
 
 	render() {
 		return (
-			<Form method='GET' action={'/' + this.state.searchValue} {...this.props}>
+			<Form method='GET' action={'/' + this.state.searchValue } {...this.props}>
 				<Input noSpacing placeholder='How do I learn...' list='topics' onChange={this.handleInput} />
 
 				<datalist id='topics'>
