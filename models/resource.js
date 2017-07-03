@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const ResourceSchema = new mongoose.Schema({
 	title: String,
+	topic: String,
 	type: String,
 	link: String,
 	description: String,

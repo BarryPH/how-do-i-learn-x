@@ -1,21 +1,13 @@
+const mongoose = require('mongoose');
+const Resource = mongoose.model('Resource');
 const faker = require('faker');
 
 const resolvers = {
-	Query : {
-		resources: () => {
-			const fakeData = [];
-			for (let i = 0; i < 10; i++) {
-				fakeData.push({
-					_id: faker.random.uuid(),
-					title: faker.lorem.words(),
-					topic: faker.lorem.word(),
-					type: faker.random.arrayElement(['book', 'video', 'article', 'other']),
-					link: `http://${faker.lorem.word()}.com`,
-					description: faker.lorem.paragraph(),
-				});
-			};
+	Query: {
+		resources: async () => {
+			const resources = await Resource.find();
 
-			return fakeData;
+			return resources;
 		},
 
 		topics: () => {
@@ -27,6 +19,15 @@ const resolvers = {
 			return fakeData;
 		},
 	},
+
+	Mutation: {
+		createResource: async (_, data) => {
+			const resource = new Resource(data);
+			await resource.save();
+
+			return resource;
+		}
+	}
 };
 
 module.exports = resolvers;

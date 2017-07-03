@@ -2,8 +2,8 @@ const Schema = `
 	type Resource {
 		_id: String,
 		title: String,
-		type: String,
 		topic: String,
+		type: String,
 		link: String,
 		description: String,
 	}
@@ -11,6 +11,16 @@ const Schema = `
 	type Query {
 		resources(topic: String): [Resource],
 		topics: [String],
+	}
+
+	type Mutation {
+		createResource(
+			title: String!,
+			topic: String!,
+			type: String!,
+			link: String,
+			description: String,
+		): Resource,
 	}
 `;
 

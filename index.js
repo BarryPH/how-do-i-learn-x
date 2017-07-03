@@ -10,6 +10,7 @@ const graphqlHTTP = require('express-graphql');
 async function start() {
 	// Mongoose
 	mongoose.connect('mongodb://localhost:27017/howdoilearn');
+	require('./models');
 
 
 	// Next.js setup
